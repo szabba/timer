@@ -13,6 +13,8 @@ MINUTES_PER_HOUR = 60
 
 class Clock(QtCore.QTimer):
 
+    time_changed = QtCore.pyqtSignal(int, int, int)
+
     def __init__(self, parent=None):
 
         super(Clock, self).__init__(parent)
@@ -31,6 +33,11 @@ class Clock(QtCore.QTimer):
 
         self.fix_params()
         self.print_time()
+
+        self.time_changed.emit(
+                self.hours,
+                self.minutes,
+                self.seconds)
 
 
     def fix_params(self):
@@ -55,10 +62,45 @@ class Clock(QtCore.QTimer):
                 self.seconds)
 
 
+class TimerLabel(QtGui.QLabel):
+    """A label that displays the time"""
+
+    def __init__(self, clock):
+
+        super(TimerLabel, self).__init__("")
+
+        clock.time_changed.connect(self.update_time)
+
+    def update_time(self, hours, minutes, seconds):
+
+        self.setText("%d:%d:%d" % (
+            hours,
+            minutes,
+            seconds))
+
+
+class TimerWindow(QtGui.QWidget):
+    """A timer window"""
+
+    def __init__(self):
+
+        super(TimerWindow, self).__init__()
+
+        self.clock = Clock(self)
+
+        box = QtGui.QBoxLayout(QtGui.QBoxLayout.TopToBottom)
+
+        box.addWidget(TimerLabel(self.clock))
+
+        self.setLayout(box)
+        self.setWindowTitle('Timer')
+        self.show()
+
+
 if __name__ == '__main__':
 
     app = QtGui.QApplication(sys.argv)
 
-    clock = Clock()
+    timer = TimerWindow()
 
     sys.exit(app.exec_())
