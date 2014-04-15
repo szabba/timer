@@ -79,6 +79,29 @@ class TimerLabel(QtGui.QLabel):
             seconds))
 
 
+class PauseButton(QtGui.QPushButton):
+    """A button that pauses the clock"""
+
+    def __init__(self, clock, parent):
+
+        super(PauseButton, self).__init__('Pause/Resume', parent)
+
+        self.clock = clock
+        self.running = True
+
+        self.clicked.connect(self.pause)
+
+    def pause(self):
+
+        if self.running:
+            self.clock.stop()
+            self.running = False
+
+        else:
+            self.clock.start()
+            self.running = True
+
+
 class TimerWindow(QtGui.QWidget):
     """A timer window"""
 
@@ -91,6 +114,7 @@ class TimerWindow(QtGui.QWidget):
         box = QtGui.QBoxLayout(QtGui.QBoxLayout.TopToBottom)
 
         box.addWidget(TimerLabel(self.clock))
+        box.addWidget(PauseButton(self.clock, self))
 
         self.setLayout(box)
         self.setWindowTitle('Timer')
