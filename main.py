@@ -61,6 +61,11 @@ class Clock(QtCore.QTimer):
                 self.minutes,
                 self.seconds)
 
+    def reset(self):
+
+        self.hours, self.minutes, self.seconds = 0, 0, 0
+        self.start()
+
 
 class TimerLabel(QtGui.QLabel):
     """A label that displays the time"""
@@ -102,6 +107,16 @@ class PauseButton(QtGui.QPushButton):
             self.running = True
 
 
+class ResetButton(QtGui.QPushButton):
+    """A button that resets the clock"""
+
+    def __init__(self, clock, parent):
+
+        super(ResetButton, self).__init__('Reset', parent)
+
+        self.clicked.connect(clock.reset)
+
+
 class TimerWindow(QtGui.QWidget):
     """A timer window"""
 
@@ -115,6 +130,7 @@ class TimerWindow(QtGui.QWidget):
 
         box.addWidget(TimerLabel(self.clock))
         box.addWidget(PauseButton(self.clock, self))
+        box.addWidget(ResetButton(self.clock, self))
 
         self.setLayout(box)
         self.setWindowTitle('Timer')
